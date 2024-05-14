@@ -1,15 +1,14 @@
 import { Agent, DidRecord, HttpOutboundTransport, InitConfig, WalletConfig, WsOutboundTransport } from '@credo-ts/core';
-import { HttpInboundTransport } from '@credo-ts/node';
-import express, { Express } from 'express';
+import { agentDependencies, HttpInboundTransport } from '@credo-ts/node';
 import { AgentModule } from '../module';
 
+export type IndyAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
 export abstract class BaseAgent {
     public port: number;
     public label: string;
     readonly config: InitConfig;
     public endpoints: string[];
-    public agent: Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
-    public app: Express
+    public agent: IndyAgentModule | Agent
 
     public constructor({
         port,
@@ -21,9 +20,8 @@ export abstract class BaseAgent {
         port: number;
         label: string;
         endpoints: string[];
-        agent: Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
+        agent: IndyAgentModule
         config: InitConfig;
-        useLegacyIndySdk?: boolean;
     }) {
         this.port = port;
         this.label = label;
@@ -32,8 +30,7 @@ export abstract class BaseAgent {
         this.config = config;
         this.agent = agent
 
-        this.app = express();
-        this.agent.registerInboundTransport(new HttpInboundTransport({ app: this.app, port }));
+        this.agent.registerInboundTransport(new HttpInboundTransport({  port }));
         this.agent.registerOutboundTransport(new HttpOutboundTransport());
         this.agent.registerOutboundTransport(new WsOutboundTransport());
 

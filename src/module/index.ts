@@ -1,10 +1,11 @@
 import { AnonCredsCredentialFormatService, AnonCredsModule, AnonCredsProofFormatService } from "@credo-ts/anoncreds";
 import { AskarModule } from "@credo-ts/askar";
 import { AutoAcceptCredential, AutoAcceptProof, ConnectionsModule, CredentialsModule, DidsModule, ProofsModule, V2CredentialProtocol, V2ProofProtocol } from "@credo-ts/core";
-import { IndyVdrAnonCredsRegistry, IndyVdrIndyDidRegistrar, IndyVdrIndyDidResolver } from "@credo-ts/indy-vdr";
+import { IndyVdrAnonCredsRegistry, IndyVdrIndyDidRegistrar, IndyVdrIndyDidResolver, IndyVdrModule } from "@credo-ts/indy-vdr";
 import { anoncreds } from '@hyperledger/anoncreds-nodejs'
 import { ariesAskar } from '@hyperledger/aries-askar-nodejs'
-
+import { indyVdr } from '@hyperledger/indy-vdr-nodejs'
+import { BcovrinTestNetworkConfig } from "../networks/bcovrin-test";
 
 
 export const AgentModule = {
@@ -20,6 +21,10 @@ export const AgentModule = {
                         credentialFormats: [new AnonCredsCredentialFormatService()],
                     }),
                 ],
+            }),
+            indyVdr: new IndyVdrModule({
+                indyVdr,
+                networks: [BcovrinTestNetworkConfig],
             }),
             proofs: new ProofsModule({
                 autoAcceptProofs: AutoAcceptProof.ContentApproved,
@@ -42,5 +47,5 @@ export const AgentModule = {
             }),
 
         } as const
-    } 
+    }
 }

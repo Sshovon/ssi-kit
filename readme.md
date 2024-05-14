@@ -1,0 +1,2 @@
+- Endorser DID = did:bcovrin:test:HTYnVHNExB8qjMh8otSz4X
+- Seed = ssiatm00000000000000000000000000
