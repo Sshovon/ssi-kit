@@ -1,0 +1,34 @@
+{
+  "name": "ssi-atm-credo",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "refresh": "rm -rf node_modules yarn.lock && yarn"
+  },
+  "engines": {
+    "node": ">=18.12.0"
+  },
+  "dependencies": {
+    "@hyperledger/anoncreds-nodejs": "^0.2.2",
+    "@hyperledger/aries-askar-nodejs": "0.2.1",
+    "@hyperledger/indy-vdr-nodejs": "^0.2.2",
+    "@credo-ts/anoncreds": "0.5.3",
+    "@credo-ts/askar": "0.5.3",
+    "@credo-ts/core": "0.5.3",
+    "@credo-ts/indy-vdr": "0.5.3",
+    "@credo-ts/node": "0.5.3",
+    "dotenv": "^16.3.1",
+    "winston": "^3.11.0",
+    "tsup": "^8.0.2",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.4.0",
+    "typescript": "^5.2.2"
+  }
+
+}
