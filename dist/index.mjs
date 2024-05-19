@@ -125,8 +125,14 @@ function importDid(options) {
         ],
         overwrite: true
       });
+      return {
+        success: true
+      };
     } catch (e) {
-      throw new Error(e.message);
+      return {
+        success: false,
+        message: e.message
+      };
     }
   });
 }
@@ -136,6 +142,262 @@ function initAgent() {
   return __async(this, null, function* () {
     try {
       yield this.agent.initialize();
+      console.log(`Agent ${this.agent.config.label} is initialized on port ${this.port}`);
+      this.proofListener();
+      this.messageListener();
+      this.credentialListener();
+      this.connectionListener();
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+
+// src/lib/schema.ts
+function createSchema(options) {
+  return __async(this, null, function* () {
+    try {
+      const response = yield this.agent.modules.anoncreds.registerSchema({
+        schema: {
+          name: options.name,
+          version: options.version,
+          attrNames: options.attributes,
+          issuerId: options.did
+        },
+        options: {
+          endorserMode: "internal",
+          endorserDid: options.did
+        }
+      });
+      return {
+        schemaId: response.schemaState.schemaId,
+        state: response.schemaState.state,
+        schema: response.schemaState.schema
+      };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+function getSchema(options) {
+  return __async(this, null, function* () {
+    try {
+      const response = yield this.agent.modules.anoncreds.getSchema(options.schemaId);
+      return {
+        schemaId: response.schemaId,
+        schema: response.schema
+      };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+
+// src/lib/cred-def.ts
+function createCredentialDefinition(options) {
+  return __async(this, null, function* () {
+    try {
+      const response = yield this.agent.modules.anoncreds.registerCredentialDefinition({
+        credentialDefinition: {
+          schemaId: options.schemaId,
+          tag: options.tag,
+          issuerId: options.did
+        },
+        options: {
+          endorserMode: "internal",
+          endorserDid: options.did,
+          supportRevocation: false
+        }
+      });
+      return {
+        credentialDefinitionId: response.credentialDefinitionState.credentialDefinitionId,
+        state: response.credentialDefinitionState.state
+      };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+function getCredentialDefinition(options) {
+  return __async(this, null, function* () {
+    try {
+      const response = yield this.agent.modules.anoncreds.getCredentialDefinition(options.credentialDefinitionId);
+      return {
+        credentialDefinitionId: response.credentialDefinitionId,
+        credentialDefinition: response.credentialDefinition
+      };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+
+// src/lib/credential.ts
+function offerCredential(options) {
+  return __async(this, null, function* () {
+    try {
+      const response = yield this.agent.credentials.offerCredential({
+        connectionId: options.connectionId,
+        protocolVersion: "v2",
+        credentialFormats: {
+          anoncreds: {
+            attributes: options.attributes,
+            credentialDefinitionId: options.credentialDefinitionId,
+            linkedAttachments: options.linkedAttachments
+          }
+        }
+      });
+      return {
+        credentialExchangeRecordId: response.id,
+        state: response.state
+      };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+function getCredentialExchangeRecord(options) {
+  return __async(this, null, function* () {
+    try {
+      const response = yield this.agent.credentials.getById(options.credentialExchangeRecordId);
+      return response;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+
+// src/lib/proof.ts
+function createConnectionlessProofRequest(options) {
+  return __async(this, null, function* () {
+    try {
+      const proofConfig = {
+        name: options.presentationRequestLabel,
+        version: options.presentationRequestVersion
+      };
+      if (options.requested_attributes) {
+        proofConfig.requestedAttributes = options.requested_attributes;
+      }
+      if (options.requested_predicates) {
+        proofConfig.requestedPredicates = options.requested_predicates;
+      }
+      if (options.non_revoked) {
+        proofConfig.nonRevoked = options.non_revoked;
+      }
+      const { message, proofRecord } = yield this.agent.proofs.createRequest({
+        protocolVersion: "v2",
+        proofFormats: {
+          anoncreds: proofConfig
+        }
+      });
+      const oobInvitationRecord = yield this.agent.oob.createInvitation({
+        alias: options.alias,
+        label: options.label,
+        handshake: false,
+        messages: [message]
+      });
+      const invitationUrl = oobInvitationRecord.outOfBandInvitation.toUrl({
+        domain: options.domain
+      });
+      const invitationJson = oobInvitationRecord.outOfBandInvitation.toJSON();
+      return {
+        presentationExchangeRecordId: proofRecord.id,
+        invitationJson,
+        state: proofRecord.state,
+        invitationUrl
+      };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+function getProofExchangeRecord(options) {
+  return __async(this, null, function* () {
+    var _a;
+    try {
+      const response = yield this.agent.proofs.getById(options.presentationExchangeRecordId);
+      return {
+        presentationExchangeRecordId: response.id,
+        state: response.state,
+        isVerified: (_a = response.isVerified) != null ? _a : false,
+        record: response
+      };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+
+// src/lib/listener.ts
+import { BasicMessageEventTypes, BasicMessageRole, ConnectionEventTypes, CredentialEventTypes, DidExchangeState, ProofEventTypes, ProofState } from "@credo-ts/core";
+function proofListener() {
+  console.log(`ProofListener is started on ${this.agent.config.label}`);
+  this.agent.events.on(ProofEventTypes.ProofStateChanged, (event) => __async(this, null, function* () {
+    console.log("ProofStateChangedEvent", event.payload.proofRecord.state);
+    const verificationWebhookTiggerLogic = event.payload.proofRecord.state === ProofState.Done || event.payload.proofRecord.state === ProofState.Declined || event.payload.proofRecord.state === ProofState.Abandoned;
+    if (verificationWebhookTiggerLogic) {
+    }
+  }));
+}
+function messageListener() {
+  console.log(`MessageListener is started on ${this.agent.config.label}`);
+  this.agent.events.on(
+    BasicMessageEventTypes.BasicMessageStateChanged,
+    (event) => __async(this, null, function* () {
+      console.log("BasicMessageStateChangedEvent", event.payload.basicMessageRecord.role);
+      if (event.payload.basicMessageRecord.role === BasicMessageRole.Receiver) {
+      }
+    })
+  );
+}
+function credentialListener() {
+  console.log(`CredentialListener is started on ${this.agent.config.label}`);
+  this.agent.events.on(
+    CredentialEventTypes.CredentialStateChanged,
+    (event) => __async(this, null, function* () {
+      console.log("CredentialStateChangedEvent", event.payload.credentialRecord.state);
+    })
+  );
+}
+function connectionListener() {
+  console.log(`ConnectionListener is started on ${this.agent.config.label}`);
+  this.agent.events.on(ConnectionEventTypes.ConnectionStateChanged, (event) => __async(this, null, function* () {
+    console.log("ConnectionStateChangedEvent", event.payload.connectionRecord.state);
+    const connectionWebhookTiggerLogic = event.payload.connectionRecord.state === DidExchangeState.Abandoned || event.payload.connectionRecord.state === DidExchangeState.Completed;
+  }));
+}
+
+// src/lib/connection.ts
+function createInvitation(options) {
+  return __async(this, null, function* () {
+    var _a;
+    try {
+      const response = yield this.agent.oob.createInvitation({
+        alias: this.label,
+        label: this.label,
+        multiUseInvitation: (_a = options.reusable) != null ? _a : false
+      });
+      return {
+        invitationUrl: response.outOfBandInvitation.toUrl({ domain: options.domain }),
+        invitationJson: response.outOfBandInvitation.toJSON(),
+        oobId: response.id
+      };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+function getConnectionById(options) {
+  return __async(this, null, function* () {
+    try {
+      if (options.connectionId) {
+        const record = yield this.agent.connections.getById(options.connectionId);
+        return { record };
+      } else if (options.oobId) {
+        const [record] = yield this.agent.connections.findAllByOutOfBandId(options.oobId);
+        return { record };
+      }
+      throw new Error("Either connectionId or oobId must be provided");
     } catch (e) {
       throw new Error(e.message);
     }
@@ -163,33 +425,30 @@ var Issuer = class extends BaseAgent {
       modules: AgentModule.IndyIssuer()
     });
     super({ port, label, endpoints, agent, config });
-    this.initialize = initAgent;
+    this.initialize = initAgent.bind(this);
+    // did
     this.importDidFromLedger = importDid;
-  }
-  proofListener() {
-    throw new Error("Method not implemented.");
-  }
-  messageListener() {
-    throw new Error("Method not implemented.");
-  }
-  credentialListener() {
-    throw new Error("Method not implemented.");
-  }
-  connectionListener() {
-    throw new Error("Method not implemented.");
+    // connection
+    this.createConnectionInvitation = createInvitation;
+    this.getConnectionById = getConnectionById;
+    // schema
+    this.createSchema = createSchema;
+    this.getSchemaById = getSchema;
+    // credential definition
+    this.createCredentialDefinition = createCredentialDefinition;
+    this.getCredentialDefinitionById = getCredentialDefinition;
+    // credential issuance
+    this.issueCredential = offerCredential;
+    this.getCredentialRecordById = getCredentialExchangeRecord;
+    // proof request
+    this.createProofRequest = createConnectionlessProofRequest;
+    this.getProofRecordById = getProofExchangeRecord;
+    this.proofListener = proofListener;
+    this.messageListener = messageListener;
+    this.credentialListener = credentialListener;
+    this.connectionListener = connectionListener;
   }
 };
-function main() {
-  return __async(this, null, function* () {
-    const issuer = new Issuer({ port: 3001, label: "issuer", endpoints: [], key: "1234" });
-    yield issuer.initialize();
-    yield issuer.importDidFromLedger({
-      did: "did:indy:bcovrin:test:HTYnVHNExB8qjMh8otSz4X",
-      seed: "ssiatm00000000000000000000000000"
-    });
-  });
-}
-main();
 export {
   Issuer
 };

@@ -2,8 +2,9 @@ import { Agent, InitConfig } from "@credo-ts/core";
 import { BaseAgent } from "./base";
 import { AgentModule } from "../module";
 import { agentDependencies } from "@credo-ts/node";
-import { DidImportOptions, importDid, initAgent } from "../lib";
+import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, connectionListener, createConnectionlessProofRequest, createCredentialDefinition, createInvitation, CreateInvitationOptions, CreateInvitationResponse, createSchema, CredentialDefinitionCreateOptions, CredentialDefinitionCreateResponse, credentialListener, DidImportOptions, DidImportResponse, getConnectionById, GetConnectionByIdOptions, GetConnectionByIdResponse, getCredentialDefinition, GetCredentialDefinitionByIdOptions, GetCredentialDefinitionByIdResponse, getCredentialExchangeRecord, GetCredentialExchangeRecordOptions, GetCredentialExchangeRecordResponse, getProofExchangeRecord, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, getSchema, GetSchemaByIdOptions, GetSchemaByIdResponse, importDid, initAgent, messageListener, offerCredential, OfferCredentialOptions, OfferCredentialResponse, proofListener, SchemaCreateOptions, SchemaCreateResponse } from "../lib";
 
+export type IssuerAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
 export class Issuer extends BaseAgent {
 
     public constructor({
@@ -33,21 +34,30 @@ export class Issuer extends BaseAgent {
         super({ port, label, endpoints, agent, config });
     }
 
-    public initialize: () => Promise<void> = initAgent
+    public initialize: () => Promise<void> = initAgent.bind(this)
 
-    public importDidFromLedger: (options: DidImportOptions) => Promise<void> = importDid
-    protected proofListener(): void {
-        throw new Error("Method not implemented.");
-    }
-    protected messageListener(): void {
-        throw new Error("Method not implemented.");
-    }
-    protected credentialListener(): void {
-        throw new Error("Method not implemented.");
-    }
-    protected connectionListener(): void {
-        throw new Error("Method not implemented.");
-    }
+    // did
+    public importDidFromLedger: (options: DidImportOptions) => Promise<DidImportResponse> = importDid
+    // connection
+    public createConnectionInvitation: (options: CreateInvitationOptions) => Promise<CreateInvitationResponse> = createInvitation
+    public getConnectionById: (options: GetConnectionByIdOptions) => Promise<GetConnectionByIdResponse> = getConnectionById
+    // schema
+    public createSchema: (options: SchemaCreateOptions) => Promise<SchemaCreateResponse> = createSchema
+    public getSchemaById: (options: GetSchemaByIdOptions) => Promise<GetSchemaByIdResponse> = getSchema
+    // credential definition
+    public createCredentialDefinition: (options: CredentialDefinitionCreateOptions) => Promise<CredentialDefinitionCreateResponse> = createCredentialDefinition
+    public getCredentialDefinitionById: (options: GetCredentialDefinitionByIdOptions) => Promise<GetCredentialDefinitionByIdResponse> = getCredentialDefinition
+    // credential issuance
+    public issueCredential: (options: OfferCredentialOptions) => Promise<OfferCredentialResponse> = offerCredential
+    public getCredentialRecordById: (options: GetCredentialExchangeRecordOptions) => Promise<GetCredentialExchangeRecordResponse> = getCredentialExchangeRecord
+    // proof request
+    public createProofRequest: (options: ConnectionlessProofRequestOptions) => Promise<ConnectionlessProofRequestResponse> = createConnectionlessProofRequest
+    public getProofRecordById: (options: GetProofExchangeRecordOptions) => Promise<GetProofExchangeRecordResponse> = getProofExchangeRecord
+
+    protected proofListener: () => void = proofListener
+    protected messageListener: () => void = messageListener
+    protected credentialListener: () => void = credentialListener
+    protected connectionListener: () => void = connectionListener
 }
 
 
@@ -60,4 +70,3 @@ async function main() {
     })
 }
 
-main()

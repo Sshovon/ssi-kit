@@ -5,7 +5,12 @@ export type DidImportOptions = {
     did: string
     seed: string
 }
-export async function importDid(this: Issuer, options: DidImportOptions) {
+
+export type DidImportResponse = {
+    success: boolean
+    message?: string
+}
+export async function importDid(this: Issuer, options: DidImportOptions): Promise<DidImportResponse> {
     try {
         await this.agent.dids.import({
             did: options.did,
@@ -19,7 +24,14 @@ export async function importDid(this: Issuer, options: DidImportOptions) {
             overwrite: true
         })
 
+        return {
+            success: true
+        }
+
     } catch (e) {
-        throw new Error((e as Error).message)
+        return {
+            success: false,
+            message: (e as Error).message
+        }
     }
 }
