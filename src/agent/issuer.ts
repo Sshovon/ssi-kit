@@ -25,6 +25,7 @@ export class Issuer extends BaseAgent {
                 id: `issuer-wallet-${label}`,
                 key,
             },
+            endpoints,
         } satisfies InitConfig
         const agent = new Agent({
             config,

@@ -378,7 +378,7 @@ function createInvitation(options) {
         multiUseInvitation: (_a = options.reusable) != null ? _a : false
       });
       return {
-        invitationUrl: response.outOfBandInvitation.toUrl({ domain: options.domain }),
+        invitationUrl: response.outOfBandInvitation.toUrl({ domain: this.agent.config.endpoints[0] }),
         invitationJson: response.outOfBandInvitation.toJSON(),
         oobId: response.id
       };
@@ -417,7 +417,8 @@ var Issuer = class extends BaseAgent {
       walletConfig: {
         id: `issuer-wallet-${label}`,
         key
-      }
+      },
+      endpoints
     };
     const agent = new Agent2({
       config,

@@ -7,7 +7,6 @@ export type CreateInvitationOptions = {
     alias?: string;
     label?: string;
     reusable?: boolean;
-    domain: string;
 };
 
 export type CreateInvitationResponse = {
@@ -24,7 +23,7 @@ export async function createInvitation(this: Issuer, options: CreateInvitationOp
             multiUseInvitation: options.reusable ?? false,
         });
         return {
-            invitationUrl: response.outOfBandInvitation.toUrl({ domain: options.domain }),
+            invitationUrl: response.outOfBandInvitation.toUrl({ domain: this.agent.config.endpoints[0] }),
             invitationJson: response.outOfBandInvitation.toJSON(),
             oobId: response.id,
         }

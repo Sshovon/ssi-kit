@@ -135,7 +135,6 @@ type CreateInvitationOptions = {
     alias?: string;
     label?: string;
     reusable?: boolean;
-    domain: string;
 };
 type CreateInvitationResponse = {
     invitationUrl: string;
