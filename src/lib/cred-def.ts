@@ -1,18 +1,6 @@
 import { IndyVdrRegisterCredentialDefinitionOptions } from "@credo-ts/indy-vdr";
 import { Issuer, IssuerAgentModule } from "../agent/issuer";
-import { AnonCredsCredentialDefinition } from "@credo-ts/anoncreds";
-
-
-export type CredentialDefinitionCreateOptions = {
-    schemaId: string
-    tag: string
-    did: string
-}
-
-export type CredentialDefinitionCreateResponse = {
-    credentialDefinitionId?: string
-    state: string
-}
+import { CredentialDefinitionCreateOptions, CredentialDefinitionCreateResponse, GetCredentialDefinitionByIdOptions, GetCredentialDefinitionByIdResponse } from "../types";
 
 // only support internal endorsement
 export async function createCredentialDefinition(this: Issuer, options: CredentialDefinitionCreateOptions): Promise<CredentialDefinitionCreateResponse> {
@@ -40,13 +28,7 @@ export async function createCredentialDefinition(this: Issuer, options: Credenti
     }
 }
 
-export type GetCredentialDefinitionByIdOptions = {
-    credentialDefinitionId: string
-}
-export type GetCredentialDefinitionByIdResponse = {
-    credentialDefinitionId: string
-    credentialDefinition?: AnonCredsCredentialDefinition
-}
+
 export async function getCredentialDefinition(this: Issuer, options: GetCredentialDefinitionByIdOptions): Promise<GetCredentialDefinitionByIdResponse> {
     try {
         const response = await (this.agent as IssuerAgentModule).modules.anoncreds.getCredentialDefinition(options.credentialDefinitionId)

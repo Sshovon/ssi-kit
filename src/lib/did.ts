@@ -1,15 +1,7 @@
 import { KeyType, TypedArrayEncoder } from "@credo-ts/core";
 import { Issuer } from "../agent/issuer";
+import { DidImportOptions, DidImportResponse } from "../types";
 
-export type DidImportOptions = {
-    did: string
-    seed: string
-}
-
-export type DidImportResponse = {
-    success: boolean
-    message?: string
-}
 export async function importDid(this: Issuer, options: DidImportOptions): Promise<DidImportResponse> {
     try {
         await this.agent.dids.import({

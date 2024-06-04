@@ -4,11 +4,11 @@ import { AgentModule } from '../module';
 
 export type IndyAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
 export abstract class BaseAgent {
-    public port: number;
-    public label: string;
-    readonly config: InitConfig;
+    protected port: number;
+    protected label: string;
+    protected readonly config: InitConfig;
     public endpoints: string[];
-    public agent: IndyAgentModule | Agent
+    protected agent: IndyAgentModule | Agent
 
     public constructor({
         port,
@@ -30,7 +30,7 @@ export abstract class BaseAgent {
         this.config = config;
         this.agent = agent
 
-        this.agent.registerInboundTransport(new HttpInboundTransport({  port }));
+        this.agent.registerInboundTransport(new HttpInboundTransport({ port }));
         this.agent.registerOutboundTransport(new HttpOutboundTransport());
         this.agent.registerOutboundTransport(new WsOutboundTransport());
 

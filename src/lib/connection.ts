@@ -1,25 +1,12 @@
-import { PlaintextMessage } from "@credo-ts/core/build/types";
 import { Issuer } from "../agent/issuer";
 import { ConnectionRecord } from "@credo-ts/core";
-
-
-export type CreateInvitationOptions = {
-    alias?: string;
-    label?: string;
-    reusable?: boolean;
-};
-
-export type CreateInvitationResponse = {
-    invitationUrl: string;
-    invitationJson: PlaintextMessage;
-    oobId: string;
-}
+import { CreateInvitationOptions, CreateInvitationResponse, GetConnectionByIdOptions, GetConnectionByIdResponse } from "../types";
 
 export async function createInvitation(this: Issuer, options: CreateInvitationOptions): Promise<CreateInvitationResponse> {
     try {
         const response = await this.agent.oob.createInvitation({
-            alias: this.label,
-            label: this.label,
+            alias: options.alias ?? this.label,
+            label: options.label ?? this.label,
             multiUseInvitation: options.reusable ?? false,
         });
         return {
@@ -33,14 +20,7 @@ export async function createInvitation(this: Issuer, options: CreateInvitationOp
     }
 }
 
-export type GetConnectionByIdOptions = {
-    connectionId?: string;
-    oobId?: string;
-};
 
-export type GetConnectionByIdResponse = {
-    record: ConnectionRecord;
-};
 
 export async function getConnectionById(this: Issuer, options: GetConnectionByIdOptions): Promise<GetConnectionByIdResponse> {
     try {

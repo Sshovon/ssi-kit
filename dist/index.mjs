@@ -370,12 +370,12 @@ function connectionListener() {
 // src/lib/connection.ts
 function createInvitation(options) {
   return __async(this, null, function* () {
-    var _a;
+    var _a, _b, _c;
     try {
       const response = yield this.agent.oob.createInvitation({
-        alias: this.label,
-        label: this.label,
-        multiUseInvitation: (_a = options.reusable) != null ? _a : false
+        alias: (_a = options.alias) != null ? _a : this.label,
+        label: (_b = options.label) != null ? _b : this.label,
+        multiUseInvitation: (_c = options.reusable) != null ? _c : false
       });
       return {
         invitationUrl: response.outOfBandInvitation.toUrl({ domain: this.agent.config.endpoints[0] }),

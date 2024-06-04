@@ -1,19 +1,7 @@
 import { IndyVdrRegisterSchemaOptions } from "@credo-ts/indy-vdr";
 import { Issuer, IssuerAgentModule } from "../agent/issuer";
-import { AnonCredsSchema } from "@credo-ts/anoncreds";
+import { GetSchemaByIdOptions, GetSchemaByIdResponse, SchemaCreateOptions, SchemaCreateResponse } from "../types";
 
-export type SchemaCreateOptions = {
-    did: string
-    name: string
-    version: string
-    attributes: string[]
-
-}
-export type SchemaCreateResponse = {
-    schemaId?: string
-    state: string
-    schema?: AnonCredsSchema
-}
 // only support internal endorsement
 export async function createSchema(this: Issuer, options: SchemaCreateOptions): Promise<SchemaCreateResponse> {
     try {
@@ -40,13 +28,6 @@ export async function createSchema(this: Issuer, options: SchemaCreateOptions): 
     }
 }
 
-export type GetSchemaByIdOptions = {
-    schemaId: string
-}
-export type GetSchemaByIdResponse = {
-    schemaId: string
-    schema?: AnonCredsSchema
-}
 export async function getSchema(this: Issuer, options: GetSchemaByIdOptions): Promise<GetSchemaByIdResponse> {
     try {
         const response = await (this.agent as IssuerAgentModule).modules.anoncreds.getSchema(options.schemaId)

@@ -1,22 +1,6 @@
 import { CredentialExchangeRecord, LinkedAttachment } from "@credo-ts/core"
 import { Issuer, IssuerAgentModule } from "../agent/issuer"
-
-export type OfferCredentialOptions = {
-    credentialDefinitionId: string
-    connectionId: string
-    attributes: {
-        name: string
-        value: string
-        mimeType?: string
-    }[],
-    comment?: string
-    linkedAttachments?: LinkedAttachment[]
-}
-export type OfferCredentialResponse = {
-    credentialExchangeRecordId: string
-    state: string
-}
-
+import { GetCredentialExchangeRecordOptions, GetCredentialExchangeRecordResponse, OfferCredentialOptions, OfferCredentialResponse } from "../types"
 // anoncreds credential
 export async function offerCredential(this: Issuer, options: OfferCredentialOptions): Promise<OfferCredentialResponse> {
     try {
@@ -40,10 +24,6 @@ export async function offerCredential(this: Issuer, options: OfferCredentialOpti
     }
 }
 
-export type GetCredentialExchangeRecordOptions = {
-    credentialExchangeRecordId: string
-}
-export type GetCredentialExchangeRecordResponse = CredentialExchangeRecord
 
 export async function getCredentialExchangeRecord(this: Issuer, options: GetCredentialExchangeRecordOptions): Promise<GetCredentialExchangeRecordResponse> {
     try {

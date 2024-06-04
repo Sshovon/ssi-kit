@@ -2,7 +2,8 @@ import { Agent, InitConfig } from "@credo-ts/core";
 import { BaseAgent } from "./base";
 import { AgentModule } from "../module";
 import { agentDependencies } from "@credo-ts/node";
-import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, connectionListener, createConnectionlessProofRequest, createCredentialDefinition, createInvitation, CreateInvitationOptions, CreateInvitationResponse, createSchema, CredentialDefinitionCreateOptions, CredentialDefinitionCreateResponse, credentialListener, DidImportOptions, DidImportResponse, getConnectionById, GetConnectionByIdOptions, GetConnectionByIdResponse, getCredentialDefinition, GetCredentialDefinitionByIdOptions, GetCredentialDefinitionByIdResponse, getCredentialExchangeRecord, GetCredentialExchangeRecordOptions, GetCredentialExchangeRecordResponse, getProofExchangeRecord, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, getSchema, GetSchemaByIdOptions, GetSchemaByIdResponse, importDid, initAgent, messageListener, offerCredential, OfferCredentialOptions, OfferCredentialResponse, proofListener, SchemaCreateOptions, SchemaCreateResponse } from "../lib";
+import { connectionListener, createConnectionlessProofRequest, createCredentialDefinition, createInvitation, createSchema, credentialListener, getConnectionById, getCredentialDefinition, getCredentialExchangeRecord, getProofExchangeRecord, getSchema, importDid, initAgent, messageListener, offerCredential, proofListener } from "../lib";
+import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, CreateInvitationOptions, CreateInvitationResponse, CredentialDefinitionCreateOptions, CredentialDefinitionCreateResponse, DidImportOptions, DidImportResponse, GetConnectionByIdOptions, GetConnectionByIdResponse, GetCredentialDefinitionByIdOptions, GetCredentialDefinitionByIdResponse, GetCredentialExchangeRecordOptions, GetCredentialExchangeRecordResponse, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, GetSchemaByIdOptions, GetSchemaByIdResponse, OfferCredentialOptions, OfferCredentialResponse, SchemaCreateOptions, SchemaCreateResponse } from "../types";
 
 export type IssuerAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
 export class Issuer extends BaseAgent {
@@ -61,13 +62,4 @@ export class Issuer extends BaseAgent {
     protected connectionListener: () => void = connectionListener
 }
 
-
-async function main() {
-    const issuer = new Issuer({ port: 3001, label: 'issuer', endpoints: [], key: "1234" })
-    await issuer.initialize()
-    await issuer.importDidFromLedger({
-        did: 'did:indy:bcovrin:test:HTYnVHNExB8qjMh8otSz4X',
-        seed: 'ssiatm00000000000000000000000000'
-    })
-}
 

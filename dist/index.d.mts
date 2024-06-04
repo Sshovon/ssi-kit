@@ -1,4 +1,4 @@
-import { ConnectionsModule, CredentialsModule, V2CredentialProtocol, ProofsModule, V2ProofProtocol, DidsModule, InitConfig, Agent, LinkedAttachment, CredentialExchangeRecord, ProofExchangeRecord, ConnectionRecord } from '@credo-ts/core';
+import { ConnectionsModule, CredentialsModule, V2CredentialProtocol, ProofsModule, V2ProofProtocol, DidsModule, InitConfig, Agent, ConnectionRecord, LinkedAttachment, CredentialExchangeRecord, ProofExchangeRecord } from '@credo-ts/core';
 import { AnonCredsCredentialFormatService, AnonCredsProofFormatService, AnonCredsModule, AnonCredsSchema, AnonCredsCredentialDefinition, AnonCredsRequestedAttribute, AnonCredsRequestedPredicate, AnonCredsNonRevokedInterval } from '@credo-ts/anoncreds';
 import { AskarModule } from '@credo-ts/askar';
 import { IndyVdrModule } from '@credo-ts/indy-vdr';
@@ -18,11 +18,11 @@ declare const AgentModule: {
 
 type IndyAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
 declare abstract class BaseAgent {
-    port: number;
-    label: string;
-    readonly config: InitConfig;
+    protected port: number;
+    protected label: string;
+    protected readonly config: InitConfig;
     endpoints: string[];
-    agent: IndyAgentModule | Agent;
+    protected agent: IndyAgentModule | Agent;
     constructor({ port, label, endpoints, agent, config, }: {
         port: number;
         label: string;
@@ -45,7 +45,23 @@ type DidImportResponse = {
     success: boolean;
     message?: string;
 };
-
+type CreateInvitationOptions = {
+    alias?: string;
+    label?: string;
+    reusable?: boolean;
+};
+type CreateInvitationResponse = {
+    invitationUrl: string;
+    invitationJson: PlaintextMessage;
+    oobId: string;
+};
+type GetConnectionByIdOptions = {
+    connectionId?: string;
+    oobId?: string;
+};
+type GetConnectionByIdResponse = {
+    record: ConnectionRecord;
+};
 type SchemaCreateOptions = {
     did: string;
     name: string;
@@ -64,7 +80,13 @@ type GetSchemaByIdResponse = {
     schemaId: string;
     schema?: AnonCredsSchema;
 };
-
+type GetCredentialDefinitionByIdOptions = {
+    credentialDefinitionId: string;
+};
+type GetCredentialDefinitionByIdResponse = {
+    credentialDefinitionId: string;
+    credentialDefinition?: AnonCredsCredentialDefinition;
+};
 type CredentialDefinitionCreateOptions = {
     schemaId: string;
     tag: string;
@@ -74,14 +96,6 @@ type CredentialDefinitionCreateResponse = {
     credentialDefinitionId?: string;
     state: string;
 };
-type GetCredentialDefinitionByIdOptions = {
-    credentialDefinitionId: string;
-};
-type GetCredentialDefinitionByIdResponse = {
-    credentialDefinitionId: string;
-    credentialDefinition?: AnonCredsCredentialDefinition;
-};
-
 type OfferCredentialOptions = {
     credentialDefinitionId: string;
     connectionId: string;
@@ -101,14 +115,14 @@ type GetCredentialExchangeRecordOptions = {
     credentialExchangeRecordId: string;
 };
 type GetCredentialExchangeRecordResponse = CredentialExchangeRecord;
-
-type ProofRequestCreateOptions = {
-    presentationRequestLabel: string;
-    presentationRequestVersion: string;
-    connectionId: string;
-    requested_attributes?: Record<string, AnonCredsRequestedAttribute>;
-    requested_predicates?: Record<string, AnonCredsRequestedPredicate>;
-    non_revoked?: AnonCredsNonRevokedInterval;
+type GetProofExchangeRecordOptions = {
+    presentationExchangeRecordId: string;
+};
+type GetProofExchangeRecordResponse = {
+    presentationExchangeRecordId: string;
+    state: string;
+    isVerified: boolean;
+    record: ProofExchangeRecord;
 };
 type ConnectionlessProofRequestOptions = Omit<ProofRequestCreateOptions, 'connectionId'> & {
     label?: string;
@@ -121,32 +135,17 @@ type ConnectionlessProofRequestResponse = {
     state: string;
     invitationUrl: string;
 };
-type GetProofExchangeRecordOptions = {
-    presentationExchangeRecordId: string;
+type ProofRequestCreateOptions = {
+    presentationRequestLabel: string;
+    presentationRequestVersion: string;
+    connectionId: string;
+    requested_attributes?: Record<string, AnonCredsRequestedAttribute>;
+    requested_predicates?: Record<string, AnonCredsRequestedPredicate>;
+    non_revoked?: AnonCredsNonRevokedInterval;
 };
-type GetProofExchangeRecordResponse = {
+type ProofRequestCreateResponse = {
     presentationExchangeRecordId: string;
     state: string;
-    isVerified: boolean;
-    record: ProofExchangeRecord;
-};
-
-type CreateInvitationOptions = {
-    alias?: string;
-    label?: string;
-    reusable?: boolean;
-};
-type CreateInvitationResponse = {
-    invitationUrl: string;
-    invitationJson: PlaintextMessage;
-    oobId: string;
-};
-type GetConnectionByIdOptions = {
-    connectionId?: string;
-    oobId?: string;
-};
-type GetConnectionByIdResponse = {
-    record: ConnectionRecord;
 };
 
 declare class Issuer extends BaseAgent {
@@ -174,4 +173,4 @@ declare class Issuer extends BaseAgent {
     protected connectionListener: () => void;
 }
 
-export { Issuer };
+export { type ConnectionlessProofRequestOptions, type ConnectionlessProofRequestResponse, type CreateInvitationOptions, type CreateInvitationResponse, type CredentialDefinitionCreateOptions, type CredentialDefinitionCreateResponse, type DidImportOptions, type DidImportResponse, type GetConnectionByIdOptions, type GetConnectionByIdResponse, type GetCredentialDefinitionByIdOptions, type GetCredentialDefinitionByIdResponse, type GetCredentialExchangeRecordOptions, type GetCredentialExchangeRecordResponse, type GetProofExchangeRecordOptions, type GetProofExchangeRecordResponse, type GetSchemaByIdOptions, type GetSchemaByIdResponse, Issuer, type OfferCredentialOptions, type OfferCredentialResponse, type ProofRequestCreateOptions, type ProofRequestCreateResponse, type SchemaCreateOptions, type SchemaCreateResponse };

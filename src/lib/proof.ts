@@ -1,21 +1,6 @@
-import { AnonCredsNonRevokedInterval, AnonCredsRequestedAttribute, AnonCredsRequestedPredicate } from "@credo-ts/anoncreds";
 import { Issuer } from "../agent/issuer";
-import { PlaintextMessage } from "@credo-ts/core/build/types";
-import { ProofExchangeRecord } from "@credo-ts/core";
+import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, ProofRequestCreateOptions, ProofRequestCreateResponse } from "../types";
 
-export type ProofRequestCreateOptions = {
-    presentationRequestLabel: string;
-    presentationRequestVersion: string;
-    connectionId: string;
-    requested_attributes?: Record<string, AnonCredsRequestedAttribute>;
-    requested_predicates?: Record<string, AnonCredsRequestedPredicate>;
-    non_revoked?: AnonCredsNonRevokedInterval;
-}
-
-export type ProofRequestCreateResponse = {
-    presentationExchangeRecordId: string;
-    state: string;
-}
 export async function createProofRequest(this: Issuer, options: ProofRequestCreateOptions): Promise<ProofRequestCreateResponse> {
     try {
 
@@ -49,13 +34,6 @@ export async function createProofRequest(this: Issuer, options: ProofRequestCrea
     }
 }
 
-export type ConnectionlessProofRequestOptions = Omit<ProofRequestCreateOptions, 'connectionId'> & { label?: string, alias?: string, domain: string }
-export type ConnectionlessProofRequestResponse = {
-    presentationExchangeRecordId: string;
-    invitationJson: PlaintextMessage
-    state: string;
-    invitationUrl: string;
-};
 
 export async function createConnectionlessProofRequest(this: Issuer, options: ConnectionlessProofRequestOptions): Promise<ConnectionlessProofRequestResponse> {
     try {
@@ -103,15 +81,6 @@ export async function createConnectionlessProofRequest(this: Issuer, options: Co
     }
 }
 
-export type GetProofExchangeRecordOptions = {
-    presentationExchangeRecordId: string
-}
-export type GetProofExchangeRecordResponse = {
-    presentationExchangeRecordId: string;
-    state: string;
-    isVerified: boolean;
-    record: ProofExchangeRecord;
-}
 
 export async function getProofExchangeRecord(this: Issuer, options: GetProofExchangeRecordOptions): Promise<GetProofExchangeRecordResponse> {
     try {
