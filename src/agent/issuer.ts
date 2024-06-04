@@ -3,21 +3,22 @@ import { BaseAgent } from "./base";
 import { AgentModule } from "../module";
 import { agentDependencies } from "@credo-ts/node";
 import { connectionListener, createConnectionlessProofRequest, createCredentialDefinition, createInvitation, createSchema, credentialListener, getConnectionById, getCredentialDefinition, getCredentialExchangeRecord, getProofExchangeRecord, getSchema, importDid, initAgent, messageListener, offerCredential, proofListener } from "../lib";
-import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, CreateInvitationOptions, CreateInvitationResponse, CredentialDefinitionCreateOptions, CredentialDefinitionCreateResponse, DidImportOptions, DidImportResponse, GetConnectionByIdOptions, GetConnectionByIdResponse, GetCredentialDefinitionByIdOptions, GetCredentialDefinitionByIdResponse, GetCredentialExchangeRecordOptions, GetCredentialExchangeRecordResponse, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, GetSchemaByIdOptions, GetSchemaByIdResponse, OfferCredentialOptions, OfferCredentialResponse, SchemaCreateOptions, SchemaCreateResponse } from "../types";
+import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, CreateInvitationOptions, CreateInvitationResponse, CredentialDefinitionCreateOptions, CredentialDefinitionCreateResponse, DidImportOptions, DidImportResponse, GetConnectionByIdOptions, GetConnectionByIdResponse, GetCredentialDefinitionByIdOptions, GetCredentialDefinitionByIdResponse, GetCredentialExchangeRecordOptions, GetCredentialExchangeRecordResponse, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, GetSchemaByIdOptions, GetSchemaByIdResponse, ListernerCbs, OfferCredentialOptions, OfferCredentialResponse, SchemaCreateOptions, SchemaCreateResponse } from "../types";
 
 export type IssuerAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
 export class Issuer extends BaseAgent {
-
     public constructor({
         port,
         label,
         endpoints = [],
         key,
+        listenerCbs
     }: {
         port: number;
         label: string;
         endpoints: string[];
         key: string;
+        listenerCbs: ListernerCbs
     }) {
 
         const config = {
@@ -33,7 +34,7 @@ export class Issuer extends BaseAgent {
             dependencies: agentDependencies,
             modules: AgentModule.IndyIssuer(),
         })
-        super({ port, label, endpoints, agent, config });
+        super({ port, label, endpoints, agent, config, listenerCbs });
     }
 
     public initialize: () => Promise<void> = initAgent.bind(this)
@@ -61,5 +62,3 @@ export class Issuer extends BaseAgent {
     protected credentialListener: () => void = credentialListener
     protected connectionListener: () => void = connectionListener
 }
-
-

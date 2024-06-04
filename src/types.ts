@@ -1,5 +1,5 @@
 import { AnonCredsCredentialDefinition, AnonCredsNonRevokedInterval, AnonCredsRequestedAttribute, AnonCredsRequestedPredicate, AnonCredsSchema } from "@credo-ts/anoncreds"
-import { ConnectionRecord, CredentialExchangeRecord, LinkedAttachment, ProofExchangeRecord } from "@credo-ts/core"
+import { ConnectionRecord, CredentialExchangeRecord, LinkedAttachment, ProofExchangeRecord, ConnectionStateChangedEvent, CredentialStateChangedEvent, Proof, ProofStateChangedEvent } from "@credo-ts/core"
 import { PlaintextMessage } from "@credo-ts/core/build/types"
 
 export type DidImportOptions = {
@@ -116,3 +116,13 @@ export type ProofRequestCreateResponse = {
     presentationExchangeRecordId: string;
     state: string;
 }
+
+export interface ListernerCbs {
+    connection?: ConnectionCb,
+    credential?: CredentialCb,
+    proof?: ProofCb,
+}
+
+type ConnectionCb = (event: ConnectionStateChangedEvent) => void | Promise<void>;
+type CredentialCb = (event: CredentialStateChangedEvent) => void | Promise<void>;
+type ProofCb = (event: ProofStateChangedEvent) => void | Promise<void>;

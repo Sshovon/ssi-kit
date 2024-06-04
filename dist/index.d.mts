@@ -1,4 +1,4 @@
-import { ConnectionsModule, CredentialsModule, V2CredentialProtocol, ProofsModule, V2ProofProtocol, DidsModule, InitConfig, Agent, ConnectionRecord, LinkedAttachment, CredentialExchangeRecord, ProofExchangeRecord } from '@credo-ts/core';
+import { ConnectionsModule, CredentialsModule, V2CredentialProtocol, ProofsModule, V2ProofProtocol, DidsModule, ConnectionRecord, LinkedAttachment, CredentialExchangeRecord, ProofExchangeRecord, ConnectionStateChangedEvent, CredentialStateChangedEvent, ProofStateChangedEvent, InitConfig, Agent } from '@credo-ts/core';
 import { AnonCredsCredentialFormatService, AnonCredsProofFormatService, AnonCredsModule, AnonCredsSchema, AnonCredsCredentialDefinition, AnonCredsRequestedAttribute, AnonCredsRequestedPredicate, AnonCredsNonRevokedInterval } from '@credo-ts/anoncreds';
 import { AskarModule } from '@credo-ts/askar';
 import { IndyVdrModule } from '@credo-ts/indy-vdr';
@@ -15,27 +15,6 @@ declare const AgentModule: {
         readonly askar: AskarModule;
     };
 };
-
-type IndyAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
-declare abstract class BaseAgent {
-    protected port: number;
-    protected label: string;
-    protected readonly config: InitConfig;
-    endpoints: string[];
-    protected agent: IndyAgentModule | Agent;
-    constructor({ port, label, endpoints, agent, config, }: {
-        port: number;
-        label: string;
-        endpoints: string[];
-        agent: IndyAgentModule;
-        config: InitConfig;
-    });
-    abstract initialize(): Promise<void>;
-    protected abstract proofListener(): void;
-    protected abstract messageListener(): void;
-    protected abstract credentialListener(): void;
-    protected abstract connectionListener(): void;
-}
 
 type DidImportOptions = {
     did: string;
@@ -147,13 +126,45 @@ type ProofRequestCreateResponse = {
     presentationExchangeRecordId: string;
     state: string;
 };
+interface ListernerCbs {
+    connection?: ConnectionCb;
+    credential?: CredentialCb;
+    proof?: ProofCb;
+}
+type ConnectionCb = (event: ConnectionStateChangedEvent) => void | Promise<void>;
+type CredentialCb = (event: CredentialStateChangedEvent) => void | Promise<void>;
+type ProofCb = (event: ProofStateChangedEvent) => void | Promise<void>;
+
+type IndyAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
+declare abstract class BaseAgent {
+    protected port: number;
+    protected label: string;
+    protected readonly config: InitConfig;
+    endpoints: string[];
+    protected agent: IndyAgentModule | Agent;
+    protected listenerCbs: ListernerCbs;
+    constructor({ port, label, endpoints, agent, config, listenerCbs }: {
+        port: number;
+        label: string;
+        endpoints: string[];
+        agent: IndyAgentModule;
+        config: InitConfig;
+        listenerCbs: ListernerCbs;
+    });
+    abstract initialize(): Promise<void>;
+    protected abstract proofListener(): void;
+    protected abstract messageListener(): void;
+    protected abstract credentialListener(): void;
+    protected abstract connectionListener(): void;
+}
 
 declare class Issuer extends BaseAgent {
-    constructor({ port, label, endpoints, key, }: {
+    constructor({ port, label, endpoints, key, listenerCbs }: {
         port: number;
         label: string;
         endpoints: string[];
         key: string;
+        listenerCbs: ListernerCbs;
     });
     initialize: () => Promise<void>;
     importDidFromLedger: (options: DidImportOptions) => Promise<DidImportResponse>;
@@ -173,4 +184,4 @@ declare class Issuer extends BaseAgent {
     protected connectionListener: () => void;
 }
 
-export { type ConnectionlessProofRequestOptions, type ConnectionlessProofRequestResponse, type CreateInvitationOptions, type CreateInvitationResponse, type CredentialDefinitionCreateOptions, type CredentialDefinitionCreateResponse, type DidImportOptions, type DidImportResponse, type GetConnectionByIdOptions, type GetConnectionByIdResponse, type GetCredentialDefinitionByIdOptions, type GetCredentialDefinitionByIdResponse, type GetCredentialExchangeRecordOptions, type GetCredentialExchangeRecordResponse, type GetProofExchangeRecordOptions, type GetProofExchangeRecordResponse, type GetSchemaByIdOptions, type GetSchemaByIdResponse, Issuer, type OfferCredentialOptions, type OfferCredentialResponse, type ProofRequestCreateOptions, type ProofRequestCreateResponse, type SchemaCreateOptions, type SchemaCreateResponse };
+export { type ConnectionlessProofRequestOptions, type ConnectionlessProofRequestResponse, type CreateInvitationOptions, type CreateInvitationResponse, type CredentialDefinitionCreateOptions, type CredentialDefinitionCreateResponse, type DidImportOptions, type DidImportResponse, type GetConnectionByIdOptions, type GetConnectionByIdResponse, type GetCredentialDefinitionByIdOptions, type GetCredentialDefinitionByIdResponse, type GetCredentialExchangeRecordOptions, type GetCredentialExchangeRecordResponse, type GetProofExchangeRecordOptions, type GetProofExchangeRecordResponse, type GetSchemaByIdOptions, type GetSchemaByIdResponse, Issuer, type ListernerCbs, type OfferCredentialOptions, type OfferCredentialResponse, type ProofRequestCreateOptions, type ProofRequestCreateResponse, type SchemaCreateOptions, type SchemaCreateResponse };

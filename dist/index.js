@@ -56,13 +56,15 @@ var BaseAgent = class {
     label,
     endpoints = [],
     agent,
-    config
+    config,
+    listenerCbs
   }) {
     this.port = port;
     this.label = label;
     this.endpoints = endpoints;
     this.config = config;
     this.agent = agent;
+    this.listenerCbs = listenerCbs;
     this.agent.registerInboundTransport(new import_node.HttpInboundTransport({ port }));
     this.agent.registerOutboundTransport(new import_core.HttpOutboundTransport());
     this.agent.registerOutboundTransport(new import_core.WsOutboundTransport());
@@ -357,10 +359,13 @@ function getProofExchangeRecord(options) {
 var import_core4 = require("@credo-ts/core");
 function proofListener() {
   console.log(`ProofListener is started on ${this.agent.config.label}`);
+  console.log(this.listenerCbs.proof ? "Proof listerner callback is set" : "Proof listerner callback is not available using default listener");
   this.agent.events.on(import_core4.ProofEventTypes.ProofStateChanged, (event) => __async(this, null, function* () {
-    console.log("ProofStateChangedEvent", event.payload.proofRecord.state);
-    const verificationWebhookTiggerLogic = event.payload.proofRecord.state === import_core4.ProofState.Done || event.payload.proofRecord.state === import_core4.ProofState.Declined || event.payload.proofRecord.state === import_core4.ProofState.Abandoned;
-    if (verificationWebhookTiggerLogic) {
+    if (this.listenerCbs.proof) {
+      this.listenerCbs.proof(event);
+    } else {
+      console.log("Proof state: ", event.payload.proofRecord.state);
+      console.log("payload: ", event.payload);
     }
   }));
 }
@@ -370,25 +375,34 @@ function messageListener() {
     import_core4.BasicMessageEventTypes.BasicMessageStateChanged,
     (event) => __async(this, null, function* () {
       console.log("BasicMessageStateChangedEvent", event.payload.basicMessageRecord.role);
-      if (event.payload.basicMessageRecord.role === import_core4.BasicMessageRole.Receiver) {
-      }
     })
   );
 }
 function credentialListener() {
   console.log(`CredentialListener is started on ${this.agent.config.label}`);
+  console.log(this.listenerCbs.credential ? "Credential listerner callback is set" : "Credential listerner callback is not available using default listener");
   this.agent.events.on(
     import_core4.CredentialEventTypes.CredentialStateChanged,
     (event) => __async(this, null, function* () {
-      console.log("CredentialStateChangedEvent", event.payload.credentialRecord.state);
+      if (this.listenerCbs.credential) {
+        this.listenerCbs.credential(event);
+      } else {
+        console.log("Credential state: ", event.payload.credentialRecord.state);
+        console.log("payload: ", event.payload);
+      }
     })
   );
 }
 function connectionListener() {
+  console.log(this.listenerCbs.connection ? "Connection listerner callback is set" : "Connection listerner callback is not available using default listener");
   console.log(`ConnectionListener is started on ${this.agent.config.label}`);
   this.agent.events.on(import_core4.ConnectionEventTypes.ConnectionStateChanged, (event) => __async(this, null, function* () {
-    console.log("ConnectionStateChangedEvent", event.payload.connectionRecord.state);
-    const connectionWebhookTiggerLogic = event.payload.connectionRecord.state === import_core4.DidExchangeState.Abandoned || event.payload.connectionRecord.state === import_core4.DidExchangeState.Completed;
+    if (this.listenerCbs.connection) {
+      this.listenerCbs.connection(event);
+    } else {
+      console.log("Connection state: ", event.payload.connectionRecord.state);
+      console.log("payload: ", event.payload);
+    }
   }));
 }
 
@@ -435,7 +449,8 @@ var Issuer = class extends BaseAgent {
     port,
     label,
     endpoints = [],
-    key
+    key,
+    listenerCbs
   }) {
     const config = {
       label,
@@ -450,7 +465,7 @@ var Issuer = class extends BaseAgent {
       dependencies: import_node2.agentDependencies,
       modules: AgentModule.IndyIssuer()
     });
-    super({ port, label, endpoints, agent, config });
+    super({ port, label, endpoints, agent, config, listenerCbs });
     this.initialize = initAgent.bind(this);
     // did
     this.importDidFromLedger = importDid;
