@@ -2,8 +2,8 @@ import { Agent, InitConfig } from "@credo-ts/core";
 import { BaseAgent } from "./base";
 import { AgentModule } from "../module";
 import { agentDependencies } from "@credo-ts/node";
-import { connectionListener, createConnectionlessProofRequest, createCredentialDefinition, createInvitation, createSchema, credentialListener, getConnectionById, getCredentialDefinition, getCredentialExchangeRecord, getProofExchangeRecord, getSchema, importDid, initAgent, messageListener, offerCredential, proofListener } from "../lib";
-import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, CreateInvitationOptions, CreateInvitationResponse, CredentialDefinitionCreateOptions, CredentialDefinitionCreateResponse, DidImportOptions, DidImportResponse, GetConnectionByIdOptions, GetConnectionByIdResponse, GetCredentialDefinitionByIdOptions, GetCredentialDefinitionByIdResponse, GetCredentialExchangeRecordOptions, GetCredentialExchangeRecordResponse, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, GetSchemaByIdOptions, GetSchemaByIdResponse, ListernerCbs, OfferCredentialOptions, OfferCredentialResponse, SchemaCreateOptions, SchemaCreateResponse } from "../types";
+import { connectionListener, createConnectionlessProofRequest, createCredentialDefinition, createInvitation, createSchema, credentialListener, getConnectionById, getCreatedCredentialDefinitions, getCreatedSchemas, getCredentialDefinitionFromLedger, getCredentialExchangeRecord, getPresentationData, getProofExchangeRecord, getSchemaFromLedger, getWalletDids, importDid, initAgent, messageListener, offerCredential, proofListener } from "../lib";
+import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, CreateInvitationOptions, CreateInvitationResponse, CredentialDefinitionCreateOptions, CredentialDefinitionCreateResponse, DidImportOptions, DidImportResponse, GetConnectionByIdOptions, GetConnectionByIdResponse, GetCreatedCredentialDefinitionsOptions, GetCreatedCredentialDefinitionsResponse, GetCreatedSchemasOptions, GetCreatedSchemasResponse, GetCredentialDefinitionByIdOptions, GetCredentialDefinitionByIdResponse, GetCredentialExchangeRecordOptions, GetCredentialExchangeRecordResponse, GetPresentationDataOptions, GetPresentationDataResponse, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, GetSchemaByIdOptions, GetSchemaByIdResponse, GetWalletDidsOptions, GetWalletDidsResponse, ListernerCbs, OfferCredentialOptions, OfferCredentialResponse, SchemaCreateOptions, SchemaCreateResponse } from "../types";
 
 export type IssuerAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
 export class Issuer extends BaseAgent {
@@ -41,21 +41,25 @@ export class Issuer extends BaseAgent {
 
     // did
     public importDidFromLedger: (options: DidImportOptions) => Promise<DidImportResponse> = importDid
+    public getPublicDids: (options: GetWalletDidsOptions) => Promise<GetWalletDidsResponse> = getWalletDids
     // connection
     public createConnectionInvitation: (options: CreateInvitationOptions) => Promise<CreateInvitationResponse> = createInvitation
     public getConnectionById: (options: GetConnectionByIdOptions) => Promise<GetConnectionByIdResponse> = getConnectionById
     // schema
     public createSchema: (options: SchemaCreateOptions) => Promise<SchemaCreateResponse> = createSchema
-    public getSchemaById: (options: GetSchemaByIdOptions) => Promise<GetSchemaByIdResponse> = getSchema
+    public retriveSchemaFromLedgerById: (options: GetSchemaByIdOptions) => Promise<GetSchemaByIdResponse> = getSchemaFromLedger
+    public getSchemasFromWallet: (options: GetCreatedSchemasOptions) => Promise<GetCreatedSchemasResponse> = getCreatedSchemas
     // credential definition
     public createCredentialDefinition: (options: CredentialDefinitionCreateOptions) => Promise<CredentialDefinitionCreateResponse> = createCredentialDefinition
-    public getCredentialDefinitionById: (options: GetCredentialDefinitionByIdOptions) => Promise<GetCredentialDefinitionByIdResponse> = getCredentialDefinition
+    public getCredentialDefintionsFromWallet: (options: GetCreatedCredentialDefinitionsOptions) => Promise<GetCreatedCredentialDefinitionsResponse> = getCreatedCredentialDefinitions
+    public retrieveCredentialDefinitionFromLedgerById: (options: GetCredentialDefinitionByIdOptions) => Promise<GetCredentialDefinitionByIdResponse> = getCredentialDefinitionFromLedger
     // credential issuance
     public issueCredential: (options: OfferCredentialOptions) => Promise<OfferCredentialResponse> = offerCredential
     public getCredentialRecordById: (options: GetCredentialExchangeRecordOptions) => Promise<GetCredentialExchangeRecordResponse> = getCredentialExchangeRecord
     // proof request
     public createProofRequest: (options: ConnectionlessProofRequestOptions) => Promise<ConnectionlessProofRequestResponse> = createConnectionlessProofRequest
     public getProofRecordById: (options: GetProofExchangeRecordOptions) => Promise<GetProofExchangeRecordResponse> = getProofExchangeRecord
+    public getPresentationData: (options: GetPresentationDataOptions) => Promise<GetPresentationDataResponse> = getPresentationData
 
     protected proofListener: () => void = proofListener
     protected messageListener: () => void = messageListener

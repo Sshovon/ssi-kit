@@ -1,5 +1,5 @@
-import { ConnectionsModule, CredentialsModule, V2CredentialProtocol, ProofsModule, V2ProofProtocol, DidsModule, ConnectionRecord, LinkedAttachment, CredentialExchangeRecord, ProofExchangeRecord, ConnectionStateChangedEvent, CredentialStateChangedEvent, ProofStateChangedEvent, InitConfig, Agent } from '@credo-ts/core';
-import { AnonCredsCredentialFormatService, AnonCredsProofFormatService, AnonCredsModule, AnonCredsSchema, AnonCredsCredentialDefinition, AnonCredsRequestedAttribute, AnonCredsRequestedPredicate, AnonCredsNonRevokedInterval } from '@credo-ts/anoncreds';
+import { ConnectionsModule, CredentialsModule, V2CredentialProtocol, ProofsModule, V2ProofProtocol, DidsModule, ConnectionRecord, LinkedAttachment, CredentialExchangeRecord, ProofExchangeRecord, GetProofFormatDataReturn, ConnectionStateChangedEvent, CredentialStateChangedEvent, ProofStateChangedEvent, InitConfig, Agent } from '@credo-ts/core';
+import { AnonCredsCredentialFormatService, AnonCredsProofFormatService, AnonCredsModule, AnonCredsSchema, AnonCredsCredentialDefinition, AnonCredsProofFormat, AnonCredsRequestedAttribute, AnonCredsRequestedPredicate, AnonCredsNonRevokedInterval } from '@credo-ts/anoncreds';
 import { AskarModule } from '@credo-ts/askar';
 import { IndyVdrModule } from '@credo-ts/indy-vdr';
 import { PlaintextMessage } from '@credo-ts/core/build/types';
@@ -23,6 +23,13 @@ type DidImportOptions = {
 type DidImportResponse = {
     success: boolean;
     message?: string;
+};
+type GetWalletDidsOptions = {
+    method?: string;
+    did?: string;
+};
+type GetWalletDidsResponse = {
+    dids: string[];
 };
 type CreateInvitationOptions = {
     alias?: string;
@@ -59,6 +66,10 @@ type GetSchemaByIdResponse = {
     schemaId: string;
     schema?: AnonCredsSchema;
 };
+type GetCreatedSchemasOptions = {
+    schemaId?: string;
+};
+type GetCreatedSchemasResponse = GetSchemaByIdResponse[];
 type GetCredentialDefinitionByIdOptions = {
     credentialDefinitionId: string;
 };
@@ -66,6 +77,10 @@ type GetCredentialDefinitionByIdResponse = {
     credentialDefinitionId: string;
     credentialDefinition?: AnonCredsCredentialDefinition;
 };
+type GetCreatedCredentialDefinitionsOptions = {
+    credentialDefinitionId?: string;
+};
+type GetCreatedCredentialDefinitionsResponse = GetCredentialDefinitionByIdResponse[];
 type CredentialDefinitionCreateOptions = {
     schemaId: string;
     tag: string;
@@ -103,6 +118,8 @@ type GetProofExchangeRecordResponse = {
     isVerified: boolean;
     record: ProofExchangeRecord;
 };
+type GetPresentationDataOptions = GetProofExchangeRecordOptions;
+type GetPresentationDataResponse = GetProofFormatDataReturn<AnonCredsProofFormat[]>;
 type ConnectionlessProofRequestOptions = Omit<ProofRequestCreateOptions, 'connectionId'> & {
     label?: string;
     alias?: string;
@@ -168,20 +185,24 @@ declare class Issuer extends BaseAgent {
     });
     initialize: () => Promise<void>;
     importDidFromLedger: (options: DidImportOptions) => Promise<DidImportResponse>;
+    getPublicDids: (options: GetWalletDidsOptions) => Promise<GetWalletDidsResponse>;
     createConnectionInvitation: (options: CreateInvitationOptions) => Promise<CreateInvitationResponse>;
     getConnectionById: (options: GetConnectionByIdOptions) => Promise<GetConnectionByIdResponse>;
     createSchema: (options: SchemaCreateOptions) => Promise<SchemaCreateResponse>;
-    getSchemaById: (options: GetSchemaByIdOptions) => Promise<GetSchemaByIdResponse>;
+    retriveSchemaFromLedgerById: (options: GetSchemaByIdOptions) => Promise<GetSchemaByIdResponse>;
+    getSchemasFromWallet: (options: GetCreatedSchemasOptions) => Promise<GetCreatedSchemasResponse>;
     createCredentialDefinition: (options: CredentialDefinitionCreateOptions) => Promise<CredentialDefinitionCreateResponse>;
-    getCredentialDefinitionById: (options: GetCredentialDefinitionByIdOptions) => Promise<GetCredentialDefinitionByIdResponse>;
+    getCredentialDefintionsFromWallet: (options: GetCreatedCredentialDefinitionsOptions) => Promise<GetCreatedCredentialDefinitionsResponse>;
+    retrieveCredentialDefinitionFromLedgerById: (options: GetCredentialDefinitionByIdOptions) => Promise<GetCredentialDefinitionByIdResponse>;
     issueCredential: (options: OfferCredentialOptions) => Promise<OfferCredentialResponse>;
     getCredentialRecordById: (options: GetCredentialExchangeRecordOptions) => Promise<GetCredentialExchangeRecordResponse>;
     createProofRequest: (options: ConnectionlessProofRequestOptions) => Promise<ConnectionlessProofRequestResponse>;
     getProofRecordById: (options: GetProofExchangeRecordOptions) => Promise<GetProofExchangeRecordResponse>;
+    getPresentationData: (options: GetPresentationDataOptions) => Promise<GetPresentationDataResponse>;
     protected proofListener: () => void;
     protected messageListener: () => void;
     protected credentialListener: () => void;
     protected connectionListener: () => void;
 }
 
-export { type ConnectionlessProofRequestOptions, type ConnectionlessProofRequestResponse, type CreateInvitationOptions, type CreateInvitationResponse, type CredentialDefinitionCreateOptions, type CredentialDefinitionCreateResponse, type DidImportOptions, type DidImportResponse, type GetConnectionByIdOptions, type GetConnectionByIdResponse, type GetCredentialDefinitionByIdOptions, type GetCredentialDefinitionByIdResponse, type GetCredentialExchangeRecordOptions, type GetCredentialExchangeRecordResponse, type GetProofExchangeRecordOptions, type GetProofExchangeRecordResponse, type GetSchemaByIdOptions, type GetSchemaByIdResponse, Issuer, type ListernerCbs, type OfferCredentialOptions, type OfferCredentialResponse, type ProofRequestCreateOptions, type ProofRequestCreateResponse, type SchemaCreateOptions, type SchemaCreateResponse };
+export { type ConnectionlessProofRequestOptions, type ConnectionlessProofRequestResponse, type CreateInvitationOptions, type CreateInvitationResponse, type CredentialDefinitionCreateOptions, type CredentialDefinitionCreateResponse, type DidImportOptions, type DidImportResponse, type GetConnectionByIdOptions, type GetConnectionByIdResponse, type GetCreatedCredentialDefinitionsOptions, type GetCreatedCredentialDefinitionsResponse, type GetCreatedSchemasOptions, type GetCreatedSchemasResponse, type GetCredentialDefinitionByIdOptions, type GetCredentialDefinitionByIdResponse, type GetCredentialExchangeRecordOptions, type GetCredentialExchangeRecordResponse, type GetPresentationDataOptions, type GetPresentationDataResponse, type GetProofExchangeRecordOptions, type GetProofExchangeRecordResponse, type GetSchemaByIdOptions, type GetSchemaByIdResponse, type GetWalletDidsOptions, type GetWalletDidsResponse, Issuer, type ListernerCbs, type OfferCredentialOptions, type OfferCredentialResponse, type ProofRequestCreateOptions, type ProofRequestCreateResponse, type SchemaCreateOptions, type SchemaCreateResponse };

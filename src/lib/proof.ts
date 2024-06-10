@@ -1,5 +1,7 @@
+import { AnonCredsProofFormat } from "@credo-ts/anoncreds";
 import { Issuer } from "../agent/issuer";
-import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, ProofRequestCreateOptions, ProofRequestCreateResponse } from "../types";
+import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, GetPresentationDataOptions, GetPresentationDataResponse, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, ProofRequestCreateOptions, ProofRequestCreateResponse } from "../types";
+import { GetProofFormatDataReturn } from "@credo-ts/core";
 
 export async function createProofRequest(this: Issuer, options: ProofRequestCreateOptions): Promise<ProofRequestCreateResponse> {
     try {
@@ -92,6 +94,15 @@ export async function getProofExchangeRecord(this: Issuer, options: GetProofExch
             record: response
 
         }
+    } catch (e) {
+        throw new Error((e as Error).message)
+    }
+}
+
+export async function getPresentationData(this: Issuer, options: GetPresentationDataOptions): Promise<GetPresentationDataResponse> {
+    try {
+        const response = await this.agent.proofs.getFormatData(options.presentationExchangeRecordId)
+        return response
     } catch (e) {
         throw new Error((e as Error).message)
     }

@@ -1,5 +1,5 @@
-import { AnonCredsCredentialDefinition, AnonCredsNonRevokedInterval, AnonCredsRequestedAttribute, AnonCredsRequestedPredicate, AnonCredsSchema } from "@credo-ts/anoncreds"
-import { ConnectionRecord, CredentialExchangeRecord, LinkedAttachment, ProofExchangeRecord, ConnectionStateChangedEvent, CredentialStateChangedEvent, Proof, ProofStateChangedEvent } from "@credo-ts/core"
+import { AnonCredsCredentialDefinition, AnonCredsNonRevokedInterval, AnonCredsProofFormat, AnonCredsRequestedAttribute, AnonCredsRequestedPredicate, AnonCredsSchema } from "@credo-ts/anoncreds"
+import { ConnectionRecord, CredentialExchangeRecord, LinkedAttachment, ProofExchangeRecord, ConnectionStateChangedEvent, CredentialStateChangedEvent, Proof, ProofStateChangedEvent, GetProofFormatDataReturn } from "@credo-ts/core"
 import { PlaintextMessage } from "@credo-ts/core/build/types"
 
 export type DidImportOptions = {
@@ -9,6 +9,14 @@ export type DidImportOptions = {
 export type DidImportResponse = {
     success: boolean
     message?: string
+}
+
+export type GetWalletDidsOptions = {
+    method?: string
+    did?: string
+}
+export type GetWalletDidsResponse = {
+    dids: string[]
 }
 export type CreateInvitationOptions = {
     alias?: string;
@@ -46,6 +54,11 @@ export type GetSchemaByIdResponse = {
     schemaId: string
     schema?: AnonCredsSchema
 }
+export type GetCreatedSchemasOptions = {
+    schemaId?: string
+}
+export type GetCreatedSchemasResponse = GetSchemaByIdResponse[]
+
 export type GetCredentialDefinitionByIdOptions = {
     credentialDefinitionId: string
 }
@@ -53,6 +66,11 @@ export type GetCredentialDefinitionByIdResponse = {
     credentialDefinitionId: string
     credentialDefinition?: AnonCredsCredentialDefinition
 }
+export type GetCreatedCredentialDefinitionsOptions = {
+    credentialDefinitionId?: string
+}
+export type GetCreatedCredentialDefinitionsResponse = GetCredentialDefinitionByIdResponse[]
+
 export type CredentialDefinitionCreateOptions = {
     schemaId: string
     tag: string
@@ -94,6 +112,8 @@ export type GetProofExchangeRecordResponse = {
     isVerified: boolean;
     record: ProofExchangeRecord;
 }
+export type GetPresentationDataOptions = GetProofExchangeRecordOptions
+export type GetPresentationDataResponse = GetProofFormatDataReturn<AnonCredsProofFormat[]>
 
 export type ConnectionlessProofRequestOptions = Omit<ProofRequestCreateOptions, 'connectionId'> & { label?: string, alias?: string, domain: string }
 export type ConnectionlessProofRequestResponse = {

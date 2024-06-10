@@ -138,6 +138,19 @@ function importDid(options) {
     }
   });
 }
+function getWalletDids(options) {
+  return __async(this, null, function* () {
+    try {
+      const dids = yield this.agent.dids.getCreatedDids({
+        method: options.method,
+        did: options.did
+      });
+      return { dids: dids.map((did) => did.did) };
+    } catch (e) {
+      return { dids: [] };
+    }
+  });
+}
 
 // src/lib/init.ts
 function initAgent() {
@@ -181,7 +194,7 @@ function createSchema(options) {
     }
   });
 }
-function getSchema(options) {
+function getSchemaFromLedger(options) {
   return __async(this, null, function* () {
     try {
       const response = yield this.agent.modules.anoncreds.getSchema(options.schemaId);
@@ -189,6 +202,18 @@ function getSchema(options) {
         schemaId: response.schemaId,
         schema: response.schema
       };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+function getCreatedSchemas(options) {
+  return __async(this, null, function* () {
+    try {
+      const schemas = yield this.agent.modules.anoncreds.getCreatedSchemas({
+        schemaId: options.schemaId
+      });
+      return schemas;
     } catch (e) {
       throw new Error(e.message);
     }
@@ -220,7 +245,7 @@ function createCredentialDefinition(options) {
     }
   });
 }
-function getCredentialDefinition(options) {
+function getCredentialDefinitionFromLedger(options) {
   return __async(this, null, function* () {
     try {
       const response = yield this.agent.modules.anoncreds.getCredentialDefinition(options.credentialDefinitionId);
@@ -228,6 +253,18 @@ function getCredentialDefinition(options) {
         credentialDefinitionId: response.credentialDefinitionId,
         credentialDefinition: response.credentialDefinition
       };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+function getCreatedCredentialDefinitions(options) {
+  return __async(this, null, function* () {
+    try {
+      const credentialDefinitions = yield this.agent.modules.anoncreds.getCreatedCredentialDefinitions({
+        credentialDefinitionId: options.credentialDefinitionId
+      });
+      return credentialDefinitions;
     } catch (e) {
       throw new Error(e.message);
     }
@@ -324,6 +361,16 @@ function getProofExchangeRecord(options) {
         isVerified: (_a = response.isVerified) != null ? _a : false,
         record: response
       };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
+function getPresentationData(options) {
+  return __async(this, null, function* () {
+    try {
+      const response = yield this.agent.proofs.getFormatData(options.presentationExchangeRecordId);
+      return response;
     } catch (e) {
       throw new Error(e.message);
     }
@@ -444,21 +491,25 @@ var Issuer = class extends BaseAgent {
     this.initialize = initAgent.bind(this);
     // did
     this.importDidFromLedger = importDid;
+    this.getPublicDids = getWalletDids;
     // connection
     this.createConnectionInvitation = createInvitation;
     this.getConnectionById = getConnectionById;
     // schema
     this.createSchema = createSchema;
-    this.getSchemaById = getSchema;
+    this.retriveSchemaFromLedgerById = getSchemaFromLedger;
+    this.getSchemasFromWallet = getCreatedSchemas;
     // credential definition
     this.createCredentialDefinition = createCredentialDefinition;
-    this.getCredentialDefinitionById = getCredentialDefinition;
+    this.getCredentialDefintionsFromWallet = getCreatedCredentialDefinitions;
+    this.retrieveCredentialDefinitionFromLedgerById = getCredentialDefinitionFromLedger;
     // credential issuance
     this.issueCredential = offerCredential;
     this.getCredentialRecordById = getCredentialExchangeRecord;
     // proof request
     this.createProofRequest = createConnectionlessProofRequest;
     this.getProofRecordById = getProofExchangeRecord;
+    this.getPresentationData = getPresentationData;
     this.proofListener = proofListener;
     this.messageListener = messageListener;
     this.credentialListener = credentialListener;
