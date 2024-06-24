@@ -11,13 +11,13 @@ export async function createProofRequest(this: Issuer, options: ProofRequestCrea
             version: options.presentationRequestVersion,
         }
         if (options.requested_attributes) {
-            proofConfig.requestedAttributes = options.requested_attributes
+            proofConfig.requested_attributes = options.requested_attributes
         }
         if (options.requested_predicates) {
-            proofConfig.requestedPredicates = options.requested_predicates
+            proofConfig.requested_predicates = options.requested_predicates
         }
         if (options.non_revoked) {
-            proofConfig.nonRevoked = options.non_revoked
+            proofConfig.non_revoked = options.non_revoked
         }
         const response = await this.agent.proofs.requestProof({
             protocolVersion: 'v2',
@@ -44,14 +44,15 @@ export async function createConnectionlessProofRequest(this: Issuer, options: Co
             version: options.presentationRequestVersion,
         }
         if (options.requested_attributes) {
-            proofConfig.requestedAttributes = options.requested_attributes
+            proofConfig.requested_attributes = options.requested_attributes
         }
         if (options.requested_predicates) {
-            proofConfig.requestedPredicates = options.requested_predicates
+            proofConfig.requested_predicates = options.requested_predicates
         }
         if (options.non_revoked) {
-            proofConfig.nonRevoked = options.non_revoked
+            proofConfig.non_revoked = options.non_revoked
         }
+
         const { message, proofRecord } = await this.agent.proofs.createRequest({
             protocolVersion: 'v2',
             proofFormats: {
@@ -60,8 +61,6 @@ export async function createConnectionlessProofRequest(this: Issuer, options: Co
         });
 
         const oobInvitationRecord = await this.agent.oob.createInvitation({
-            alias: options.alias,
-            label: options.label,
             handshake: false,
             messages: [message],
         })
