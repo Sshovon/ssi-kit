@@ -23445,13 +23445,10 @@ var BaseAgent = class {
     this.config = config;
     this.agent = agent;
     this.listenerCbs = listenerCbs;
-    this.agent.registerInboundTransport(new HttpInboundTransport({ port }));
+    this.app = (0, import_express.default)();
+    this.agent.registerInboundTransport(new HttpInboundTransport({ port, app: this.app }));
     this.agent.registerOutboundTransport(new HttpOutboundTransport());
     this.agent.registerOutboundTransport(new WsOutboundTransport());
-    this.app = (0, import_express.default)();
-    this.app.get("/status", (req, res) => {
-      res.send({ "status": 200 });
-    });
   }
 };
 

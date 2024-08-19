@@ -38,13 +38,10 @@ export abstract class BaseAgent {
         this.agent = agent
         this.listenerCbs = listenerCbs
 
-        this.agent.registerInboundTransport(new HttpInboundTransport({ port }));
+        this.app = express();
+        this.agent.registerInboundTransport(new HttpInboundTransport({ port, app: this.app }));
         this.agent.registerOutboundTransport(new HttpOutboundTransport());
         this.agent.registerOutboundTransport(new WsOutboundTransport());
-        this.app = express();
-        this.app.get('/status', (req, res) => {
-            res.send({ "status": 200 });
-        });
 
     }
 

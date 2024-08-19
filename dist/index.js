@@ -23452,13 +23452,10 @@ var BaseAgent = class {
     this.config = config;
     this.agent = agent;
     this.listenerCbs = listenerCbs;
-    this.agent.registerInboundTransport(new import_node.HttpInboundTransport({ port }));
+    this.app = (0, import_express.default)();
+    this.agent.registerInboundTransport(new import_node.HttpInboundTransport({ port, app: this.app }));
     this.agent.registerOutboundTransport(new import_core.HttpOutboundTransport());
     this.agent.registerOutboundTransport(new import_core.WsOutboundTransport());
-    this.app = (0, import_express.default)();
-    this.app.get("/status", (req, res) => {
-      res.send({ "status": 200 });
-    });
   }
 };
 
