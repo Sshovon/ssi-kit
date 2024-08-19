@@ -2,7 +2,7 @@ import { Agent, DidRecord, HttpOutboundTransport, InitConfig, WalletConfig, WsOu
 import { agentDependencies, HttpInboundTransport } from '@credo-ts/node';
 import { AgentModule } from '../module';
 import { ListernerCbs } from '../types';
-import express, { Express, Router } from 'express';
+import express, { Express } from 'express';
 
 export type IndyAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
 export abstract class BaseAgent {
@@ -12,7 +12,7 @@ export abstract class BaseAgent {
     public endpoints: string[];
     protected agent: IndyAgentModule | Agent
     protected listenerCbs: ListernerCbs
-    private app: Express
+    public app: Express
 
 
     public constructor({

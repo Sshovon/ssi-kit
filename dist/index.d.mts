@@ -3,6 +3,7 @@ import { AnonCredsCredentialFormatService, AnonCredsProofFormatService, AnonCred
 import { AskarModule } from '@credo-ts/askar';
 import { IndyVdrModule } from '@credo-ts/indy-vdr';
 import { PlaintextMessage } from '@credo-ts/core/build/types';
+import { Express } from 'express';
 
 declare const AgentModule: {
     IndyIssuer: () => {
@@ -160,7 +161,7 @@ declare abstract class BaseAgent {
     endpoints: string[];
     protected agent: IndyAgentModule | Agent;
     protected listenerCbs: ListernerCbs;
-    private app;
+    app: Express;
     constructor({ port, label, endpoints, agent, config, listenerCbs }: {
         port: number;
         label: string;
