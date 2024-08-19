@@ -185,7 +185,7 @@ declare class Issuer extends BaseAgent {
         key: string;
         listenerCbs: ListernerCbs;
         sqliteConfig?: {
-            sqliteStoragePath?: string;
+            path?: string;
             inMemory?: boolean;
         };
     });

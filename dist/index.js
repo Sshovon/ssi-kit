@@ -23894,12 +23894,13 @@ var Issuer = class extends BaseAgent {
         key,
         storage: {
           type: "sqlite",
-          path: (_a = sqliteConfig == null ? void 0 : sqliteConfig.sqliteStoragePath) != null ? _a : void 0,
+          path: (_a = sqliteConfig == null ? void 0 : sqliteConfig.path) != null ? _a : void 0,
           inMemory: sqliteConfig == null ? void 0 : sqliteConfig.inMemory
         }
       },
       endpoints
     };
+    console.log(config);
     const agent = new import_core5.Agent({
       config,
       dependencies: import_node2.agentDependencies,

@@ -21,11 +21,11 @@ export class Issuer extends BaseAgent {
         key: string;
         listenerCbs: ListernerCbs,
         sqliteConfig?: {
-            sqliteStoragePath?: string
+            path?: string
             inMemory?: boolean
         }
     }) {
-
+        
         const config = {
             label,
             walletConfig: {
@@ -33,12 +33,13 @@ export class Issuer extends BaseAgent {
                 key,
                 storage: {
                     type: "sqlite",
-                    path: sqliteConfig?.sqliteStoragePath ?? undefined,
+                    path: sqliteConfig?.path ?? undefined,
                     inMemory: sqliteConfig?.inMemory
                 }
             },
             endpoints,
         } satisfies InitConfig
+        console.log(config)
         const agent = new Agent({
             config,
             dependencies: agentDependencies,
