@@ -2,6 +2,7 @@ import { Agent, DidRecord, HttpOutboundTransport, InitConfig, WalletConfig, WsOu
 import { agentDependencies, HttpInboundTransport } from '@credo-ts/node';
 import { AgentModule } from '../module';
 import { ListernerCbs } from '../types';
+import express, { Express, Router } from 'express';
 
 export type IndyAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
 export abstract class BaseAgent {
@@ -11,6 +12,8 @@ export abstract class BaseAgent {
     public endpoints: string[];
     protected agent: IndyAgentModule | Agent
     protected listenerCbs: ListernerCbs
+    private app: Express
+
 
     public constructor({
         port,
@@ -38,6 +41,10 @@ export abstract class BaseAgent {
         this.agent.registerInboundTransport(new HttpInboundTransport({ port }));
         this.agent.registerOutboundTransport(new HttpOutboundTransport());
         this.agent.registerOutboundTransport(new WsOutboundTransport());
+        this.app = express();
+        this.app.get('/status', (req, res) => {
+            res.send({ "status": 200 });
+        });
 
     }
 

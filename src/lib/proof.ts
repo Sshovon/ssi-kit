@@ -5,7 +5,6 @@ import { GetProofFormatDataReturn } from "@credo-ts/core";
 
 export async function createProofRequest(this: Issuer, options: ProofRequestCreateOptions): Promise<ProofRequestCreateResponse> {
     try {
-
         const proofConfig: any = {
             name: options.presentationRequestLabel,
             version: options.presentationRequestVersion,
@@ -35,8 +34,6 @@ export async function createProofRequest(this: Issuer, options: ProofRequestCrea
         throw new Error((e as Error).message)
     }
 }
-
-
 export async function createConnectionlessProofRequest(this: Issuer, options: ConnectionlessProofRequestOptions): Promise<ConnectionlessProofRequestResponse> {
     try {
         const proofConfig: any = {
@@ -81,8 +78,6 @@ export async function createConnectionlessProofRequest(this: Issuer, options: Co
         throw new Error((e as Error).message)
     }
 }
-
-
 export async function getProofExchangeRecord(this: Issuer, options: GetProofExchangeRecordOptions): Promise<GetProofExchangeRecordResponse> {
     try {
         const response = await this.agent.proofs.getById(options.presentationExchangeRecordId)
@@ -97,7 +92,6 @@ export async function getProofExchangeRecord(this: Issuer, options: GetProofExch
         throw new Error((e as Error).message)
     }
 }
-
 export async function getPresentationData(this: Issuer, options: GetPresentationDataOptions): Promise<GetPresentationDataResponse> {
     try {
         const response = await this.agent.proofs.getFormatData(options.presentationExchangeRecordId)

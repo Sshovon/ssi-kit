@@ -160,6 +160,7 @@ declare abstract class BaseAgent {
     endpoints: string[];
     protected agent: IndyAgentModule | Agent;
     protected listenerCbs: ListernerCbs;
+    private app;
     constructor({ port, label, endpoints, agent, config, listenerCbs }: {
         port: number;
         label: string;

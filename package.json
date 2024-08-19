@@ -1,6 +1,6 @@
 {
-  "name": "ssi-atm-credo",
-  "version": "1.0.0",
+  "name": "ssi-kit",
+  "version": "0.0.3",
   "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
