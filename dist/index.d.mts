@@ -178,12 +178,16 @@ declare abstract class BaseAgent {
 }
 
 declare class Issuer extends BaseAgent {
-    constructor({ port, label, endpoints, key, listenerCbs }: {
+    constructor({ port, label, endpoints, key, listenerCbs, sqliteConfig }: {
         port: number;
         label: string;
         endpoints: string[];
         key: string;
         listenerCbs: ListernerCbs;
+        sqliteConfig?: {
+            sqliteStoragePath?: string;
+            inMemory?: boolean;
+        };
     });
     initialize: () => Promise<void>;
     importDidFromLedger: (options: DidImportOptions) => Promise<DidImportResponse>;

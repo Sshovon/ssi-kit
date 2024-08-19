@@ -23876,13 +23876,20 @@ var Issuer = class extends BaseAgent {
     label,
     endpoints = [],
     key,
-    listenerCbs
+    listenerCbs,
+    sqliteConfig
   }) {
+    var _a;
     const config = {
       label,
       walletConfig: {
         id: `issuer-wallet-${label}`,
-        key
+        key,
+        storage: {
+          type: "sqlite",
+          path: (_a = sqliteConfig == null ? void 0 : sqliteConfig.sqliteStoragePath) != null ? _a : void 0,
+          inMemory: sqliteConfig == null ? void 0 : sqliteConfig.inMemory
+        }
       },
       endpoints
     };
