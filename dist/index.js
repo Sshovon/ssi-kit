@@ -15498,7 +15498,7 @@ var require_object_inspect = __commonJS({
       if (typeof window !== "undefined" && obj === window) {
         return "{ [object Window] }";
       }
-      if (obj === global) {
+      if (typeof globalThis !== "undefined" && obj === globalThis || typeof global !== "undefined" && obj === global) {
         return "{ [object globalThis] }";
       }
       if (!isDate(obj) && !isRegExp(obj)) {
@@ -17419,11 +17419,17 @@ var require_parseurl = __commonJS({
             }
             break;
           case 9:
+          /* \t */
           case 10:
+          /* \n */
           case 12:
+          /* \f */
           case 13:
+          /* \r */
           case 32:
+          /*    */
           case 35:
+          /* #  */
           case 160:
           case 65279:
             return parse(str);
@@ -22775,6 +22781,7 @@ var require_response = __commonJS({
         chunk = statuses.message[chunk];
       }
       switch (typeof chunk) {
+        // string defaulting to html
         case "string":
           if (!this.get("Content-Type")) {
             this.type("html");
@@ -23231,6 +23238,7 @@ var require_response = __commonJS({
               return "\\u003e";
             case 38:
               return "\\u0026";
+            /* istanbul ignore next: unreachable default */
             default:
               return c;
           }
@@ -23900,7 +23908,6 @@ var Issuer = class extends BaseAgent {
       },
       endpoints
     };
-    console.log(config);
     const agent = new import_core5.Agent({
       config,
       dependencies: import_node2.agentDependencies,

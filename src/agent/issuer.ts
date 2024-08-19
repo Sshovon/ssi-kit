@@ -39,7 +39,6 @@ export class Issuer extends BaseAgent {
             },
             endpoints,
         } satisfies InitConfig
-        console.log(config)
         const agent = new Agent({
             config,
             dependencies: agentDependencies,

@@ -30,9 +30,9 @@
   "devDependencies": {
     "ts-node": "^10.4.0",
     "typescript": "^5.2.2"
-  },
-  "resolutions": {
-    "ws": "^8.17.1"
-  }
+    },
+    "resolutions": {
+      "ws": "^8.17.1"
+    }
 
 }
