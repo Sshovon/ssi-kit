@@ -23728,6 +23728,38 @@ function getCredentialExchangeRecord(options) {
 }
 
 // src/lib/proof.ts
+function sendProofRequest(options) {
+  return __async(this, null, function* () {
+    try {
+      const proofConfig = {
+        name: options.presentationRequestLabel,
+        version: options.presentationRequestVersion
+      };
+      if (options.requested_attributes) {
+        proofConfig.requested_attributes = options.requested_attributes;
+      }
+      if (options.requested_predicates) {
+        proofConfig.requested_predicates = options.requested_predicates;
+      }
+      if (options.non_revoked) {
+        proofConfig.non_revoked = options.non_revoked;
+      }
+      const response = yield this.agent.proofs.requestProof({
+        protocolVersion: "v2",
+        connectionId: options.connectionId,
+        proofFormats: {
+          anoncreds: proofConfig
+        }
+      });
+      return {
+        presentationExchangeRecordId: response.id,
+        state: response.state
+      };
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+}
 function createConnectionlessProofRequest(options) {
   return __async(this, null, function* () {
     try {
@@ -23933,6 +23965,7 @@ var Issuer = class extends BaseAgent {
     this.issueCredential = offerCredential;
     this.getCredentialRecordById = getCredentialExchangeRecord;
     // proof request
+    this.sendProofRequest = sendProofRequest;
     this.createProofRequest = createConnectionlessProofRequest;
     this.getProofRecordById = getProofExchangeRecord;
     this.getPresentationData = getPresentationData;

@@ -121,7 +121,7 @@ type GetProofExchangeRecordResponse = {
 };
 type GetPresentationDataOptions = GetProofExchangeRecordOptions;
 type GetPresentationDataResponse = GetProofFormatDataReturn<AnonCredsProofFormat[]>;
-type ConnectionlessProofRequestOptions = Omit<ProofRequestCreateOptions, 'connectionId'> & {
+type ConnectionlessProofRequestOptions = Omit<SendProofRequestOptions, 'connectionId'> & {
     label?: string;
     alias?: string;
     domain: string;
@@ -132,7 +132,7 @@ type ConnectionlessProofRequestResponse = {
     state: string;
     invitationUrl: string;
 };
-type ProofRequestCreateOptions = {
+type SendProofRequestOptions = {
     presentationRequestLabel: string;
     presentationRequestVersion: string;
     connectionId: string;
@@ -140,7 +140,7 @@ type ProofRequestCreateOptions = {
     requested_predicates?: Record<string, AnonCredsRequestedPredicate>;
     non_revoked?: AnonCredsNonRevokedInterval;
 };
-type ProofRequestCreateResponse = {
+type SendProofRequestResponse = {
     presentationExchangeRecordId: string;
     state: string;
 };
@@ -202,6 +202,7 @@ declare class Issuer extends BaseAgent {
     retrieveCredentialDefinitionFromLedgerById: (options: GetCredentialDefinitionByIdOptions) => Promise<GetCredentialDefinitionByIdResponse>;
     issueCredential: (options: OfferCredentialOptions) => Promise<OfferCredentialResponse>;
     getCredentialRecordById: (options: GetCredentialExchangeRecordOptions) => Promise<GetCredentialExchangeRecordResponse>;
+    sendProofRequest: (options: SendProofRequestOptions) => Promise<SendProofRequestResponse>;
     createProofRequest: (options: ConnectionlessProofRequestOptions) => Promise<ConnectionlessProofRequestResponse>;
     getProofRecordById: (options: GetProofExchangeRecordOptions) => Promise<GetProofExchangeRecordResponse>;
     getPresentationData: (options: GetPresentationDataOptions) => Promise<GetPresentationDataResponse>;
@@ -211,4 +212,4 @@ declare class Issuer extends BaseAgent {
     protected connectionListener: () => void;
 }
 
-export { type ConnectionlessProofRequestOptions, type ConnectionlessProofRequestResponse, type CreateInvitationOptions, type CreateInvitationResponse, type CredentialDefinitionCreateOptions, type CredentialDefinitionCreateResponse, type DidImportOptions, type DidImportResponse, type GetConnectionByIdOptions, type GetConnectionByIdResponse, type GetCreatedCredentialDefinitionsOptions, type GetCreatedCredentialDefinitionsResponse, type GetCreatedSchemasOptions, type GetCreatedSchemasResponse, type GetCredentialDefinitionByIdOptions, type GetCredentialDefinitionByIdResponse, type GetCredentialExchangeRecordOptions, type GetCredentialExchangeRecordResponse, type GetPresentationDataOptions, type GetPresentationDataResponse, type GetProofExchangeRecordOptions, type GetProofExchangeRecordResponse, type GetSchemaByIdOptions, type GetSchemaByIdResponse, type GetWalletDidsOptions, type GetWalletDidsResponse, Issuer, type ListernerCbs, type OfferCredentialOptions, type OfferCredentialResponse, type ProofRequestCreateOptions, type ProofRequestCreateResponse, type SchemaCreateOptions, type SchemaCreateResponse };
+export { type ConnectionlessProofRequestOptions, type ConnectionlessProofRequestResponse, type CreateInvitationOptions, type CreateInvitationResponse, type CredentialDefinitionCreateOptions, type CredentialDefinitionCreateResponse, type DidImportOptions, type DidImportResponse, type GetConnectionByIdOptions, type GetConnectionByIdResponse, type GetCreatedCredentialDefinitionsOptions, type GetCreatedCredentialDefinitionsResponse, type GetCreatedSchemasOptions, type GetCreatedSchemasResponse, type GetCredentialDefinitionByIdOptions, type GetCredentialDefinitionByIdResponse, type GetCredentialExchangeRecordOptions, type GetCredentialExchangeRecordResponse, type GetPresentationDataOptions, type GetPresentationDataResponse, type GetProofExchangeRecordOptions, type GetProofExchangeRecordResponse, type GetSchemaByIdOptions, type GetSchemaByIdResponse, type GetWalletDidsOptions, type GetWalletDidsResponse, Issuer, type ListernerCbs, type OfferCredentialOptions, type OfferCredentialResponse, type SchemaCreateOptions, type SchemaCreateResponse, type SendProofRequestOptions, type SendProofRequestResponse };

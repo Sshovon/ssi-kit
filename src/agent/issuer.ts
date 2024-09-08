@@ -2,8 +2,8 @@ import { Agent, InitConfig } from "@credo-ts/core";
 import { BaseAgent } from "./base";
 import { AgentModule } from "../module";
 import { agentDependencies } from "@credo-ts/node";
-import { connectionListener, createConnectionlessProofRequest, createCredentialDefinition, createInvitation, createSchema, credentialListener, getConnectionById, getCreatedCredentialDefinitions, getCreatedSchemas, getCredentialDefinitionFromLedger, getCredentialExchangeRecord, getPresentationData, getProofExchangeRecord, getSchemaFromLedger, getWalletDids, importDid, initAgent, messageListener, offerCredential, proofListener } from "../lib";
-import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, CreateInvitationOptions, CreateInvitationResponse, CredentialDefinitionCreateOptions, CredentialDefinitionCreateResponse, DidImportOptions, DidImportResponse, GetConnectionByIdOptions, GetConnectionByIdResponse, GetCreatedCredentialDefinitionsOptions, GetCreatedCredentialDefinitionsResponse, GetCreatedSchemasOptions, GetCreatedSchemasResponse, GetCredentialDefinitionByIdOptions, GetCredentialDefinitionByIdResponse, GetCredentialExchangeRecordOptions, GetCredentialExchangeRecordResponse, GetPresentationDataOptions, GetPresentationDataResponse, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, GetSchemaByIdOptions, GetSchemaByIdResponse, GetWalletDidsOptions, GetWalletDidsResponse, ListernerCbs, OfferCredentialOptions, OfferCredentialResponse, SchemaCreateOptions, SchemaCreateResponse } from "../types";
+import { connectionListener, createConnectionlessProofRequest, createCredentialDefinition, createInvitation, createSchema, credentialListener, getConnectionById, getCreatedCredentialDefinitions, getCreatedSchemas, getCredentialDefinitionFromLedger, getCredentialExchangeRecord, getPresentationData, getProofExchangeRecord, getSchemaFromLedger, getWalletDids, importDid, initAgent, messageListener, offerCredential, proofListener, sendProofRequest } from "../lib";
+import { ConnectionlessProofRequestOptions, ConnectionlessProofRequestResponse, CreateInvitationOptions, CreateInvitationResponse, CredentialDefinitionCreateOptions, CredentialDefinitionCreateResponse, DidImportOptions, DidImportResponse, GetConnectionByIdOptions, GetConnectionByIdResponse, GetCreatedCredentialDefinitionsOptions, GetCreatedCredentialDefinitionsResponse, GetCreatedSchemasOptions, GetCreatedSchemasResponse, GetCredentialDefinitionByIdOptions, GetCredentialDefinitionByIdResponse, GetCredentialExchangeRecordOptions, GetCredentialExchangeRecordResponse, GetPresentationDataOptions, GetPresentationDataResponse, GetProofExchangeRecordOptions, GetProofExchangeRecordResponse, GetSchemaByIdOptions, GetSchemaByIdResponse, GetWalletDidsOptions, GetWalletDidsResponse, ListernerCbs, OfferCredentialOptions, OfferCredentialResponse, SchemaCreateOptions, SchemaCreateResponse, SendProofRequestOptions, SendProofRequestResponse } from "../types";
 
 export type IssuerAgentModule = Agent<ReturnType<typeof AgentModule.IndyIssuer>>;
 export class Issuer extends BaseAgent {
@@ -25,7 +25,7 @@ export class Issuer extends BaseAgent {
             inMemory?: boolean
         }
     }) {
-        
+
         const config = {
             label,
             walletConfig: {
@@ -67,6 +67,7 @@ export class Issuer extends BaseAgent {
     public issueCredential: (options: OfferCredentialOptions) => Promise<OfferCredentialResponse> = offerCredential
     public getCredentialRecordById: (options: GetCredentialExchangeRecordOptions) => Promise<GetCredentialExchangeRecordResponse> = getCredentialExchangeRecord
     // proof request
+    public sendProofRequest: (options: SendProofRequestOptions) => Promise<SendProofRequestResponse> = sendProofRequest
     public createProofRequest: (options: ConnectionlessProofRequestOptions) => Promise<ConnectionlessProofRequestResponse> = createConnectionlessProofRequest
     public getProofRecordById: (options: GetProofExchangeRecordOptions) => Promise<GetProofExchangeRecordResponse> = getProofExchangeRecord
     public getPresentationData: (options: GetPresentationDataOptions) => Promise<GetPresentationDataResponse> = getPresentationData

@@ -1,6 +1,6 @@
 {
   "name": "ssi-kit",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -23,9 +23,7 @@
     "@credo-ts/indy-vdr": "0.5.3",
     "@credo-ts/node": "0.5.3",
     "dotenv": "^16.3.1",
-    "winston": "^3.11.0",
-    "tsup": "^8.0.2",
-    "winston-daily-rotate-file": "^4.7.1"
+    "tsup": "^8.0.2"
   },
   "devDependencies": {
     "ts-node": "^10.4.0",

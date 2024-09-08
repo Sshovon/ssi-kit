@@ -115,7 +115,7 @@ export type GetProofExchangeRecordResponse = {
 export type GetPresentationDataOptions = GetProofExchangeRecordOptions
 export type GetPresentationDataResponse = GetProofFormatDataReturn<AnonCredsProofFormat[]>
 
-export type ConnectionlessProofRequestOptions = Omit<ProofRequestCreateOptions, 'connectionId'> & { label?: string, alias?: string, domain: string }
+export type ConnectionlessProofRequestOptions = Omit<SendProofRequestOptions, 'connectionId'> & { label?: string, alias?: string, domain: string }
 export type ConnectionlessProofRequestResponse = {
     presentationExchangeRecordId: string;
     invitationJson: PlaintextMessage
@@ -123,7 +123,7 @@ export type ConnectionlessProofRequestResponse = {
     invitationUrl: string;
 };
 
-export type ProofRequestCreateOptions = {
+export type SendProofRequestOptions = {
     presentationRequestLabel: string;
     presentationRequestVersion: string;
     connectionId: string;
@@ -132,7 +132,7 @@ export type ProofRequestCreateOptions = {
     non_revoked?: AnonCredsNonRevokedInterval;
 }
 
-export type ProofRequestCreateResponse = {
+export type SendProofRequestResponse = {
     presentationExchangeRecordId: string;
     state: string;
 }
