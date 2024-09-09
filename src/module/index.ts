@@ -5,7 +5,8 @@ import { IndyVdrAnonCredsRegistry, IndyVdrIndyDidRegistrar, IndyVdrIndyDidResolv
 import { anoncreds } from '@hyperledger/anoncreds-nodejs'
 import { ariesAskar } from '@hyperledger/aries-askar-nodejs'
 import { indyVdr } from '@hyperledger/indy-vdr-nodejs'
-import { BcovrinTestNetworkConfig } from "../networks/bcovrin-test";
+import { IndicioDemo } from "../networks/indicio-demo";
+import { BcovrinTest } from "../networks/bcovrin-test";
 
 
 export const AgentModule = {
@@ -24,7 +25,7 @@ export const AgentModule = {
             }),
             indyVdr: new IndyVdrModule({
                 indyVdr,
-                networks: [BcovrinTestNetworkConfig],
+                networks: [BcovrinTest, IndicioDemo],
             }),
             proofs: new ProofsModule({
                 autoAcceptProofs: AutoAcceptProof.ContentApproved,
